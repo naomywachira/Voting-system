@@ -1,10 +1,10 @@
 <?php
+session_start();
 require_once 'config/security_headers.php';
 require_once 'config.php';
 
 SecurityHeaders::apply();
 
-session_start();
 
 $nominationStatus = getSetting($pdo, 'nomination_status');
 $votingStatus = getSetting($pdo, 'voting_status');

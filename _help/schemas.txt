@@ -1,0 +1,16 @@
+categories
+    id
+    name
+    created_at
+    updated_at
+votes
+    voter_location
+    created_at
+    updated_at
+nominations
+    status
+    created_at
+    updated_at
+settings
+    setting_value
+    setting_key

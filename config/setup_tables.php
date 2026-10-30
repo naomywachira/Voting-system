@@ -14,40 +14,52 @@
 	}
 
 	// Tables and their structures
+    $must_have = "
+        publish INT DEFAULT 1,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ";
 	$tables = [
 		"Users" => "CREATE TABLE Users (
-			Id INT PRIMARY KEY AUTO_INCREMENT,
+			id INT PRIMARY KEY AUTO_INCREMENT,
 			Username TEXT,
 			Password VARCHAR(30),
 			status text default 'active',
-			Date_added DATETIME DEFAULT CURRENT_TIMESTAMP
+			$must_have
 		)",
-		"Greenhouses" => "CREATE TABLE Greenhouses (
-			id int PRIMARY KEY AUTO_INCREMENT,
-			gr_name text,
-			gr_desc text,
-			gr_crop text,
-			gr_location text,
-			gr_sensor int,
-			status text default 'not monitored',
-			Date_added DATETIME DEFAULT CURRENT_TIMESTAMP
-		)",
-		"Sensors" => "CREATE TABLE Sensors (
-			Id INT PRIMARY KEY AUTO_INCREMENT,
-			sen_serial text,
-			sen_name text,
-			sen_desc text,
-			status text default 'idle',
-			Date_added DATETIME DEFAULT CURRENT_TIMESTAMP
-		)",
-		"datalog" => "CREATE TABLE datalog (
-			Id INT PRIMARY KEY AUTO_INCREMENT,
-			sen_id int,
-			gr_id int,
-			tel_temp varchar(7),
-			tel_humidity varchar(7),
-			time_recorded datetime DEFAULT CURRENT_TIMESTAMP
-		)"
+        "categories" => "CREATE TABLE Categories(
+			id INT PRIMARY KEY AUTO_INCREMENT,
+			name VARCHAR(64),
+			$must_have
+        )",
+        "nominations" => "CREATE TABLE Nominations(
+			id INT PRIMARY KEY AUTO_INCREMENT,
+			status VARCHAR(48),
+            category_id INT NOT NULL,
+            nominee_name VARCHAR(48),
+            nominee_description VARCHAR(48),
+            nominee_email VARCHAR(48),
+            nominee_phone VARCHAR(32),
+            submitted_by INT NOT NULL,
+            submitter_email VARCHAR(48),
+            admin_remarks TEXT,
+			$must_have
+        )",
+        "settings" => "CREATE TABLE Settings(
+			id INT PRIMARY KEY AUTO_INCREMENT,
+			setting_value TEXT,
+			setting_key TEXT,
+			$must_have
+        )",
+        "Votes" => "CREATE TABLE Votes(
+			id INT PRIMARY KEY AUTO_INCREMENT,
+            nomination_id INT NOT NULL,
+            voter_id INT NOT NULL,
+            voter_ip TEXT,
+            voter_location TEXT,
+			status INT DEFAULT 0,
+			$must_have
+        )",
 	];
 
 	// Create tables if they do not exist
@@ -68,4 +80,48 @@
 
 		echo "default admin record setup successfully, you may need to log in again";
 	}
+
+    // set up the settings items
+    $stuff = [
+        '("voting_status","closed")',
+        '("nomination_status","closed")',
+    ];
+
+    $check = "SELECT COUNT(*) AS count FROM settings";
+    $settingscheck = $conn->query($check);
+    $row = $settingscheck->fetch_assoc();
+
+    if($row['count'] == 0){
+        $sql = implode(",",$stuff);
+        $qr = "INSERT INTO settings (setting_key, setting_value) VALUES $sql";
+        $query = $conn->query($qr);
+
+        if($query){
+            echo "default settings added successfully";
+        } else {
+            echo "error adding default settings";
+        }
+    }
+
+    // set up categories
+    $stuff = [
+        '("governor")',
+        '("MCA")',
+        '("Chief")',
+    ];
+    $check = "SELECT COUNT(*) AS count FROM categories";
+    $settingscheck = $conn->query($check);
+    $row = $settingscheck->fetch_assoc();
+
+    if($row['count'] == 0){
+        $sql = implode(",",$stuff);
+        $qr = "INSERT INTO categories (name) VALUES $sql";
+        $query = $conn->query($qr);
+
+        if($query){
+            echo "default categories added successfully";
+        } else {
+            echo "error adding default categories";
+        }
+    }
 ?>

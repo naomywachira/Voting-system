@@ -17,7 +17,7 @@ if($votingStatus != 'open') {
 try {
     $stmt = $pdo->query("
         SELECT c.*, 
-               (SELECT COUNT(*) FROM nominations n WHERE n.category_id = c.id AND n.status = 'approved') as nominee_count
+            (SELECT COUNT(*) FROM nominations n WHERE n.category_id = c.id AND n.status = 'approved') as nominee_count
         FROM categories c
         ORDER BY c.name
     ");
@@ -32,7 +32,7 @@ try {
     foreach ($categories as $category) {
         $stmt = $pdo->prepare("
             SELECT n.*, 
-                   (SELECT COUNT(*) FROM votes WHERE nomination_id = n.id) as vote_count
+                (SELECT COUNT(*) FROM votes WHERE nomination_id = n.id) as vote_count
             FROM nominations n 
             WHERE n.category_id = ? AND n.status = 'approved'
             ORDER BY n.nominee_name

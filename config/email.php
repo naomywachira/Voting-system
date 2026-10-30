@@ -132,5 +132,43 @@ class EmailNotifier {
             return false;
         }
     }
+
+    public function sendNominationStatus($email, $nominee_name, $status, $remarks) {
+        if (empty($email)) {
+            return false;
+        }
+        
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($email);
+            $this->mail->isHTML(true);
+            $this->mail->Subject = 'Nomination Confirmation - Voting System';
+            
+            $body = "
+                <html>
+                <body style='font-family: Arial, sans-serif;'>
+                    <h2 style='color: #c34e00;'>Nomination Updated</h2>
+                    <p>Dear Submitter,</p>
+                    <p>Thank you for submitting a nomination for:</p>
+                    <ul>
+                        <li><strong>Nominee:</strong> {$nominee_name}</li>
+                    </ul>
+                    <p>Your nomination is now has been modified to $status.</p>
+                    <br>
+                    <p>Best regards,<br>Voting System Team</p>
+                </body>
+                </html>
+            ";
+            
+            $this->mail->Body = $body;
+            $this->mail->AltBody = strip_tags($body);
+            
+            return $this->mail->send();
+            
+        } catch (Exception $e) {
+            error_log("Nomination confirmation email failed: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>
