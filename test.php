@@ -14,7 +14,7 @@ foreach ($files as $file) {
 }
 echo "</ul>";
 
-Xif (is_dir('voting_system')) {
+if (is_dir('voting_system')) {
     echo "<h3 style='color:green;'>✅ voting_system folder found!</h3>";
     echo "<p><a href='voting_system/index.php'>Go to voting_system/index.php</a></p>";
 } else {
